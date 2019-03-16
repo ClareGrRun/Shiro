@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shiro.mapper.ShiroMapper">
+  <select id="findUserByName" resultType="com.shiro.pojo.User">
+      select * from user where username=#{username}
+  </select>
+    <select id="findRoleById" resultType="String">
+        SELECT `name` as role FROM role,`user` WHERE role.`id`=user.`id` AND user.`id`=#{id}
+    </select>
+</mapper>
