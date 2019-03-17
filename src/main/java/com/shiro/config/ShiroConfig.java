@@ -1,8 +1,11 @@
 package com.shiro.config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import com.shiro.pojo.Menu;
+import com.shiro.service.ShiroService;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +15,8 @@ import java.util.*;
 
 @Configuration
 public class ShiroConfig {
+    @Autowired
+    ShiroService shiroService;
     @Bean(name="userRealm")
     public UserRealm getRealm(){
         return new UserRealm();
@@ -33,9 +38,23 @@ public class ShiroConfig {
         map.put("/login","anon");
         map.put("/logout","logout");
         map.put("/","anon");
-        map.put("/level1/**","roleOrFilter[user,admin,root]");
+        List<Menu> menus = shiroService.patterns();
+        for (Menu menu : menus){
+            List<String> roles = shiroService.roles(menu.getId());
+            StringBuffer buffer = new StringBuffer("roleOrFilter[");
+            for (int i = 0; i < roles.size();i++){
+                if(i==0){
+                    buffer.append(roles.get(i));
+                }else{
+                    buffer.append(","+roles.get(i));
+                }
+            }
+            buffer.append("]");
+            map.put(menu.getPattern(),buffer.toString());
+        }
+        /*map.put("/level1/**","roleOrFilter[user,admin,root]");
         map.put("/level2/**","roleOrFilter[admin,root]");
-        map.put("/level3/**","roles[root]");
+        map.put("/level3/**","roles[root]");*/
         map.put("/**","authc");
         shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
         shiroFilterFactoryBean.setLoginUrl("/login");
