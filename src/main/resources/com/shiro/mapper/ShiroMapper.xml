@@ -7,4 +7,10 @@
     <select id="findRoleById" resultType="String">
         SELECT `name` as role FROM role,`user` WHERE role.`id`=user.`id` AND user.`id`=#{id}
     </select>
+    <select id="patterns" resultType="com.shiro.pojo.Menu">
+        select * from menu
+    </select>
+    <select id="roles" resultType="java.lang.String">
+        SELECT `name` FROM role,menu_role WHERE role.`id`=menu_role.`rid` AND menu_role.`mid`=#{id}
+    </select>
 </mapper>
